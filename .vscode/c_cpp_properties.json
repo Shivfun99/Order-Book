@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/include",
+        "/usr/include/dpdk",
+        "/usr/include/x86_64-linux-gnu/dpdk",
+        "/usr/include/x86_64-linux-gnu",
+        "/usr/include/dbus-1.0",
+        "/usr/lib/x86_64-linux-gnu/dbus-1.0/include",
+        "/usr/include/libnl3"
+      ],
+      "forcedInclude": [
+        "/usr/include/x86_64-linux-gnu/dpdk/rte_config.h"
+      ],
+      "compilerPath": "/usr/bin/g++",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ],
+  "version": 4
+}

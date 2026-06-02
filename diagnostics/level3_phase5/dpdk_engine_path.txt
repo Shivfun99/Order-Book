@@ -1,0 +1,27 @@
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+============================================================
+PulseBook Level 3 Phase 5 - DPDK Trading Engine Path
+============================================================
+DPDK version:              DPDK 25.11.0
+Main lcore:                0
+Physical ports in use:     0
+Generator virtual port:    0
+Engine virtual port:       1
+Market packets processed:  11
+No-signal events:          10
+Orders emitted:            1
+Risk rejected:             0
+Invalid updates:           0
+Outbox full:               0
+Generated order side:      BUY
+Generated order price:     100100
+Generated order quantity:  10
+Generator TX packets:      11
+Generator RX packets:      1
+Engine RX packets:         11
+Engine TX packets:         1
+Status:                    OK

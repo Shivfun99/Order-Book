@@ -1,0 +1,9 @@
+========================================
+PulseBook Level 3 - DPDK EAL Smoke Test
+========================================
+DPDK version:      DPDK 25.11.0
+Main lcore:        0
+Enabled lcores:    1
+Available ports:   0
+EAL consumed args: 6
+Status:            OK

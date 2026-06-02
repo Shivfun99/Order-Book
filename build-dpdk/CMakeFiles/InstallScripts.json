@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/shiv/Order Book/build-dpdk/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

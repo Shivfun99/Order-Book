@@ -1,0 +1,29 @@
+[1/24] Building CXX object CMakeFiles/pulsebook_test_wire_order.dir/tests/test_wire_order.cpp.o
+[2/24] Building CXX object CMakeFiles/pulsebook_test_wire_market_data.dir/tests/test_wire_market_data.cpp.o
+[3/24] Building CXX object CMakeFiles/pulsebook_test_wire_invalid_packet.dir/tests/test_wire_invalid_packet.cpp.o
+[4/24] Building CXX object CMakeFiles/pulsebook_test_ethernet_market_frame.dir/tests/test_ethernet_market_frame.cpp.o
+[5/24] Building CXX object CMakeFiles/pulsebook_test_ethernet_order_frame.dir/tests/test_ethernet_order_frame.cpp.o
+[6/24] Building CXX object CMakeFiles/pulsebook_dpdk_hello.dir/apps/pulsebook_dpdk_hello.cpp.o
+[7/24] Building CXX object CMakeFiles/pulsebook_test_engine_wire_adapter.dir/tests/test_engine_wire_adapter.cpp.o
+[8/24] Building CXX object CMakeFiles/pulsebook_test_engine_scenarios.dir/tests/test_engine_scenarios.cpp.o
+[9/24] Building CXX object CMakeFiles/pulsebook_dpdk_engine.dir/apps/pulsebook_dpdk_engine.cpp.o
+[10/24] Linking CXX executable pulsebook_dpdk_hello
+[11/24] Building CXX object CMakeFiles/pulsebook_dpdk_ring_test.dir/apps/pulsebook_dpdk_ring_test.cpp.o
+[12/24] Linking CXX executable pulsebook_test_wire_market_data
+[13/24] Linking CXX executable pulsebook_test_wire_order
+[14/24] Linking CXX executable pulsebook_dpdk_engine
+[15/24] Linking CXX executable pulsebook_test_ethernet_market_frame
+[16/24] Linking CXX executable pulsebook_test_ethernet_order_frame
+[17/24] Linking CXX executable pulsebook_test_wire_invalid_packet
+[18/24] Linking CXX executable pulsebook_test_engine_wire_adapter
+[19/24] Linking CXX executable pulsebook_test_engine_scenarios
+[20/24] Linking CXX executable pulsebook_dpdk_ring_test
+[21/24] Building CXX object CMakeFiles/pulsebook_dpdk_scenarios.dir/apps/pulsebook_dpdk_scenarios.cpp.o
+[22/24] Building CXX object CMakeFiles/pulsebook_dpdk_latency_benchmark.dir/apps/pulsebook_dpdk_latency_benchmark.cpp.o
+/home/shiv/Order Book/apps/pulsebook_dpdk_latency_benchmark.cpp: In function ‘bool {anonymous}::run_order_iteration(pulsebook::dpdk::LatencyVirtualLink&, pulsebook::TradingEngine<64>&, const pulsebook::wire::EthernetEnvelope&, const pulsebook::wire::EthernetEnvelope&, uint32_t&, uint32_t&, uint64_t&, bool, BenchmarkCounters&)’:
+/home/shiv/Order Book/apps/pulsebook_dpdk_latency_benchmark.cpp:244:26: warning: operation on ‘incoming_sequence’ may be undefined [-Wsequence-point]
+  244 |         incoming_sequence++,
+      |         ~~~~~~~~~~~~~~~~~^~
+/home/shiv/Order Book/apps/pulsebook_dpdk_latency_benchmark.cpp:244:26: warning: operation on ‘incoming_sequence’ may be undefined [-Wsequence-point]
+[23/24] Linking CXX executable pulsebook_dpdk_scenarios
+[24/24] Linking CXX executable pulsebook_dpdk_latency_benchmark

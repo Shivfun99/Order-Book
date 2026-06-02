@@ -1,0 +1,14 @@
+[1/14] Building CXX object CMakeFiles/pulsebook_test_wire_market_data.dir/tests/test_wire_market_data.cpp.o
+[2/14] Building CXX object CMakeFiles/pulsebook_test_wire_invalid_packet.dir/tests/test_wire_invalid_packet.cpp.o
+[3/14] Building CXX object CMakeFiles/pulsebook_test_wire_order.dir/tests/test_wire_order.cpp.o
+[4/14] Building CXX object CMakeFiles/pulsebook_test_ethernet_market_frame.dir/tests/test_ethernet_market_frame.cpp.o
+[5/14] Building CXX object CMakeFiles/pulsebook_test_ethernet_order_frame.dir/tests/test_ethernet_order_frame.cpp.o
+[6/14] Linking CXX executable pulsebook_test_wire_market_data
+[7/14] Linking CXX executable pulsebook_test_wire_order
+[8/14] Linking CXX executable pulsebook_test_wire_invalid_packet
+[9/14] Linking CXX executable pulsebook_test_ethernet_order_frame
+[10/14] Linking CXX executable pulsebook_test_ethernet_market_frame
+[11/14] Building CXX object CMakeFiles/pulsebook_dpdk_hello.dir/apps/pulsebook_dpdk_hello.cpp.o
+[12/14] Linking CXX executable pulsebook_dpdk_hello
+[13/14] Building CXX object CMakeFiles/pulsebook_dpdk_ring_test.dir/apps/pulsebook_dpdk_ring_test.cpp.o
+[14/14] Linking CXX executable pulsebook_dpdk_ring_test

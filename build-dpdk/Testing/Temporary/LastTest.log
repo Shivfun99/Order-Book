@@ -1,0 +1,159 @@
+Start testing: Jun 03 01:40 IST
+----------------------------------------------------------
+1/8 Testing: pulsebook_test_wire_market_data
+1/8 Test: pulsebook_test_wire_market_data
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_wire_market_data"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_wire_market_data" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_wire_market_data" end time: Jun 03 01:40 IST
+"pulsebook_test_wire_market_data" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/8 Testing: pulsebook_test_wire_order
+2/8 Test: pulsebook_test_wire_order
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_wire_order"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_wire_order" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_wire_order" end time: Jun 03 01:40 IST
+"pulsebook_test_wire_order" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/8 Testing: pulsebook_test_wire_invalid_packet
+3/8 Test: pulsebook_test_wire_invalid_packet
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_wire_invalid_packet"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_wire_invalid_packet" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_wire_invalid_packet" end time: Jun 03 01:40 IST
+"pulsebook_test_wire_invalid_packet" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/8 Testing: pulsebook_test_ethernet_market_frame
+4/8 Test: pulsebook_test_ethernet_market_frame
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_ethernet_market_frame"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_ethernet_market_frame" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_ethernet_market_frame" end time: Jun 03 01:40 IST
+"pulsebook_test_ethernet_market_frame" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/8 Testing: pulsebook_test_ethernet_order_frame
+5/8 Test: pulsebook_test_ethernet_order_frame
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_ethernet_order_frame"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_ethernet_order_frame" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_ethernet_order_frame" end time: Jun 03 01:40 IST
+"pulsebook_test_ethernet_order_frame" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/8 Testing: pulsebook_test_engine_wire_adapter
+6/8 Test: pulsebook_test_engine_wire_adapter
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_engine_wire_adapter"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_engine_wire_adapter" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_engine_wire_adapter" end time: Jun 03 01:40 IST
+"pulsebook_test_engine_wire_adapter" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/8 Testing: pulsebook_test_engine_scenarios
+7/8 Test: pulsebook_test_engine_scenarios
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_engine_scenarios"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_engine_scenarios" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_engine_scenarios" end time: Jun 03 01:40 IST
+"pulsebook_test_engine_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/8 Testing: pulsebook_test_dpdk_scenarios_virtual
+8/8 Test: pulsebook_test_dpdk_scenarios_virtual
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_dpdk_scenarios" "-l" "0" "--no-pci" "--no-huge" "--in-memory" "--mbuf-pool-ops-name=ring_mp_mc" "--file-prefix=pb_t7"
+Directory: /home/shiv/Order Book/build-dpdk
+"pulsebook_test_dpdk_scenarios_virtual" start time: Jun 03 01:40 IST
+Output:
+----------------------------------------------------------
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+============================================================
+PulseBook Level 3 Phase 7 - DPDK Scenario Validation
+============================================================
+DPDK version:              DPDK 25.11.0
+Main lcore:                0
+Physical NIC used:         No
+Virtual PMD:               Ring PMD
+
+Scenario results:
+  NO_SIGNAL scenario:      PASSED
+  BUY scenario:            PASSED
+  SELL scenario:           PASSED
+  RISK_REJECT scenario:    PASSED
+  INVALID_FRAME scenario:  PASSED
+
+Packet counters:
+  Market frames injected:  44
+  Valid frames decoded:    43
+  Invalid frames dropped:  1
+  No-signal results:       40
+  BUY orders emitted:      1
+  SELL orders emitted:     1
+  Risk rejected:           1
+
+Virtual port counters:
+  Generator TX packets:    44
+  Generator RX packets:    2
+  Engine RX packets:       44
+  Engine TX packets:       2
+
+Status:                    OK
+<end of output>
+Test time =   1.20 sec
+----------------------------------------------------------
+Test Passed.
+"pulsebook_test_dpdk_scenarios_virtual" end time: Jun 03 01:40 IST
+"pulsebook_test_dpdk_scenarios_virtual" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Jun 03 01:40 IST

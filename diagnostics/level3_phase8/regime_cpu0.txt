@@ -1,0 +1,77 @@
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+============================================================
+PulseBook Level 3 Phase 8 - Regime Latency Benchmark
+============================================================
+DPDK version:             DPDK 25.11.0
+Main lcore:               0
+TSC frequency:            2995200000 Hz
+Physical NIC used:        No
+Virtual PMD:              Ring PMD
+Frame size:               62 bytes
+Warmup per regime:        100000
+Measured per regime:      1000000
+
+Timing boundaries:
+  NO_SIGNAL: RX returned -> engine no-order decision
+  BUY:       RX returned -> outbound BUY TX accepted
+  SELL:      RX returned -> outbound SELL TX accepted
+
+Timer read overhead:
+  Samples:              100000
+  Mean latency:         14.875 ns
+  p50 latency:          14.690 ns
+  p95 latency:          15.358 ns
+  p99 latency:          16.693 ns
+  p99.9 latency:        18.697 ns
+  Maximum latency:      5767.895 ns
+
+NO_SIGNAL decision path:
+  Samples:              1000000
+  Mean latency:         38.220 ns
+  p50 latency:          37.393 ns
+  p95 latency:          39.396 ns
+  p99 latency:          52.083 ns
+  p99.9 latency:        84.802 ns
+  Maximum latency:      96342.147 ns
+
+BUY packet-out path:
+  Samples:              1000000
+  Mean latency:         118.729 ns
+  p50 latency:          88.141 ns
+  p95 latency:          221.020 ns
+  p99 latency:          473.424 ns
+  p99.9 latency:        700.454 ns
+  Maximum latency:      52765.091 ns
+
+SELL packet-out path:
+  Samples:              1000000
+  Mean latency:         144.748 ns
+  p50 latency:          92.147 ns
+  p95 latency:          233.040 ns
+  p99 latency:          510.817 ns
+  p99.9 latency:        684.428 ns
+  Maximum latency:      672408.520 ns
+
+Regime counters including warmup:
+  NO_SIGNAL decisions:   1100000
+  BUY orders:            1100000
+  SELL orders:           1100000
+  Total failures:        0
+
+Virtual port counters including seeding and warmup:
+  Generator TX packets: 3300030
+  Generator RX packets: 2200000
+  Engine RX packets:    3300030
+  Engine TX packets:    2200000
+
+Classification:
+  Virtual DPDK application-side latency only.
+  BUY and SELL include outbound TX enqueue.
+  NO_SIGNAL ends at the no-order decision because no packet is transmitted.
+  None of these values are physical NIC wire latency or exchange RTT.
+
+Status:                   OK

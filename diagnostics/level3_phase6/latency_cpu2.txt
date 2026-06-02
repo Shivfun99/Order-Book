@@ -1,0 +1,55 @@
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+============================================================
+PulseBook Level 3 Phase 6 - Virtual DPDK Latency Benchmark
+============================================================
+DPDK version:             DPDK 25.11.0
+Main lcore:               2
+TSC frequency:            2995200000 Hz
+Physical NIC used:        No
+Virtual PMD:              Ring PMD
+Frame size:               62 bytes
+Warmup order events:      100000
+Measured order events:    1000000
+
+Measured timing boundary:
+  Start: after engine rte_eth_rx_burst() returned packet
+  End:   after engine rte_eth_tx_burst() accepted order
+
+Timer read overhead:
+  Samples:              100000
+  Mean latency:         14.525 ns
+  p50 latency:          14.690 ns
+  p95 latency:          15.358 ns
+  p99 latency:          15.358 ns
+  p99.9 latency:        18.029 ns
+  Maximum latency:      5387.286 ns
+
+Application-side DPDK packet path:
+  Samples:              1000000
+  Mean latency:         177.605 ns
+  p50 latency:          182.292 ns
+  p95 latency:          275.775 ns
+  p99 latency:          565.572 ns
+  p99.9 latency:        806.624 ns
+  Maximum latency:      124371.661 ns
+
+Measured counters:
+  Packets received:      1000000
+  Orders emitted:        1000000
+  Failures:              0
+
+Virtual port counters including setup and warmup:
+  Generator TX packets: 1100010
+  Generator RX packets: 1100000
+  Engine RX packets:    1100010
+  Engine TX packets:    1100000
+
+Classification:
+  Virtual DPDK application-side packet-in to packet-out latency.
+  This is not physical NIC wire latency or exchange RTT.
+
+Status:                   OK
