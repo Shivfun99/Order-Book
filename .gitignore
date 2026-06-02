@@ -1,0 +1,8 @@
+build*/
+*.o
+*.so
+*.a
+*.exe
+.DS_Store
+.vscode/
+pulsebook_dpdk_hello
