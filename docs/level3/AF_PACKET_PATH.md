@@ -1,30 +1,31 @@
-# PulseBook Level 3 Phase 9B: AF_PACKET Network Path
+# PulseBook Level 3 Phase 9B: DPDK AF_PACKET Path
 
-## Hardware Result
+## Hardware Decision
 
-The current laptop does not expose a suitable wired PCIe Ethernet NIC for a
-true hardware-bypass DPDK benchmark.
+The development laptop does not expose a suitable wired PCIe Ethernet NIC for
+a VFIO-backed physical DPDK benchmark.
 
-Detected interfaces:
+Detected networking:
 
-- wlp1s0: PCIe Wi-Fi adapter, not used for PulseBook DPDK hardware testing.
-- enxb632794aaaef: USB RNDIS phone-tether interface, not treated as a native
-  DPDK hardware NIC.
+- PCIe Realtek RTL8821CE Wi-Fi adapter.
+- USB RNDIS phone-tether interface.
 
-## Safe Network-Facing Development Path
+Neither is used as a physical PulseBook DPDK benchmark device.
 
-A private Linux veth pair is used:
+## Safe Functional Network Path
+
+A private Linux veth pair is created:
 
 pb_peer <-> pb_eng
 
-The raw Linux packet generator transmits PulseBook Ethernet frames through
-pb_peer. The DPDK AF_PACKET PMD attaches to pb_eng and processes the market
-frames through the actual TradingEngine path.
+The Linux raw packet generator transmits fixed PulseBook Ethernet frames from
+pb_peer. The DPDK AF_PACKET PMD attaches to pb_eng and processes the frames
+through the actual TradingEngine.
 
-## Data Path
+## Packet Path
 
 pulsebook_afpacket_generator
-  -> Linux AF_PACKET raw TX on pb_peer
+  -> raw Ethernet market-data frame on pb_peer
   -> Linux veth pair
   -> DPDK AF_PACKET RX on pb_eng
   -> decode_market_data_frame()
@@ -35,16 +36,13 @@ pulsebook_afpacket_generator
   -> Linux veth pair
   -> generator validates outbound order
 
-## Benchmark Classification
+## Measurement Classification
 
-This path is kernel-backed. It validates real Linux-interface packet ingress
-and egress through a DPDK PMD, but it is not:
+This is a kernel-backed DPDK AF_PACKET functional network path.
 
-- VFIO-bound physical NIC kernel bypass;
-- physical wire ingress-to-egress latency;
-- exchange network round-trip latency.
+It is not:
 
-## Future Real-NIC Upgrade
-
-A proper physical benchmark requires a supported wired NIC, an external packet
-peer or second usable port, and an honest latency measurement method.
+- a VFIO-bound physical NIC benchmark;
+- physical Ethernet wire latency;
+- exchange acknowledgement latency;
+- network round-trip latency.

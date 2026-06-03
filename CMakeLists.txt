@@ -56,3 +56,5 @@ include(cmake/PulseBookDpdkScenarios.cmake)
 include(cmake/PulseBookDpdkRegimeBenchmark.cmake)
 
 include(cmake/PulseBookDpdkAfPacket.cmake)
+
+include(cmake/PulseBookDpdkAfPacketLatency.cmake)

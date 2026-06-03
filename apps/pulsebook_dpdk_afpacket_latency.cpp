@@ -5,6 +5,7 @@
 #include <cstring>
 #include <span>
 
+#include <rte_cycles.h>
 #include <rte_eal.h>
 #include <rte_errno.h>
 #include <rte_ethdev.h>
@@ -12,9 +13,9 @@
 #include <rte_mbuf.h>
 #include <rte_mempool.h>
 #include <rte_pause.h>
-#include <rte_timer.h>
 #include <rte_version.h>
 
+#include "pulsebook/dpdk/dpdk_latency_recorder.hpp"
 #include "pulsebook/dpdk/engine_wire_adapter.hpp"
 #include "pulsebook/engine/trading_engine.hpp"
 #include "pulsebook/wire/ethernet_frame.hpp"
@@ -25,23 +26,28 @@ inline constexpr std::uint16_t kRxQueues = 1;
 inline constexpr std::uint16_t kTxQueues = 1;
 inline constexpr std::uint16_t kRxDescriptors = 512;
 inline constexpr std::uint16_t kTxDescriptors = 512;
-inline constexpr std::uint32_t kMempoolSize = 4095;
-inline constexpr std::uint16_t kDataRoomSize = 4096;
 inline constexpr std::uint16_t kBurstSize = 8;
-inline constexpr std::uint64_t kTimeoutSeconds = 30;
-inline constexpr const char* kMempoolName = "pb_amp";
 
-struct Counters {
+inline constexpr std::uint32_t kMempoolSize = 8191;
+inline constexpr std::uint16_t kDataRoomSize = 4096;
+inline constexpr const char* kMempoolName = "pb_almp";
+
+inline constexpr std::size_t kSeedPackets = 10;
+inline constexpr std::size_t kWarmupOrders = 100'000;
+inline constexpr std::size_t kMeasuredOrders = 1'000'000;
+inline constexpr std::uint64_t kTimeoutSeconds = 600;
+
+struct ProcessingCounters {
     std::uint64_t received_packets{};
     std::uint64_t valid_market_packets{};
     std::uint64_t invalid_packets{};
-    std::uint64_t no_signal_events{};
-    std::uint64_t orders_emitted{};
-    std::uint64_t risk_rejected{};
-    std::uint64_t outbox_full{};
+    std::uint64_t seed_no_signal_events{};
+    std::uint64_t warmup_orders{};
+    std::uint64_t measured_orders{};
+    std::uint64_t failures{};
 };
 
-void print_port_error(const char* operation,
+void print_port_error(const char* const operation,
                       const int result) noexcept {
     std::fprintf(
         stderr,
@@ -58,8 +64,8 @@ pulsebook::EngineConfig make_engine_config() noexcept {
     config.strategy.order_quantity = 10;
 
     config.risk.max_order_quantity = 100;
-    config.risk.max_absolute_position = 1000;
-    config.risk.max_notional_ticks = 1'000'000'000ULL;
+    config.risk.max_absolute_position = 100'000'000;
+    config.risk.max_notional_ticks = 15'000'000'000'000ULL;
     config.risk.max_outstanding_orders = 64;
 
     return config;
@@ -116,14 +122,14 @@ bool configure_port(const std::uint16_t port_id,
 }
 
 pulsebook::wire::EthernetEnvelope response_envelope(
-    const pulsebook::wire::EthernetEnvelope& received) noexcept {
+    const pulsebook::wire::EthernetEnvelope& request) noexcept {
     pulsebook::wire::EthernetEnvelope response{};
-    response.destination = received.source;
-    response.source = received.destination;
+    response.destination = request.source;
+    response.source = request.destination;
     return response;
 }
 
-bool send_order_packet(
+bool create_and_transmit_order(
     const std::uint16_t port_id,
     rte_mempool* const mempool,
     const pulsebook::wire::EthernetEnvelope& envelope,
@@ -174,11 +180,34 @@ bool send_order_packet(
     return true;
 }
 
+void print_latency_summary(
+    const pulsebook::dpdk::LatencySummary& summary) {
+    std::printf("  Samples:              %zu\n", summary.samples);
+    std::printf("  Mean latency:         %.3f ns\n", summary.mean_ns);
+    std::printf("  p50 latency:          %.3f ns\n", summary.p50_ns);
+    std::printf("  p95 latency:          %.3f ns\n", summary.p95_ns);
+    std::printf("  p99 latency:          %.3f ns\n", summary.p99_ns);
+    std::printf("  p99.9 latency:        %.3f ns\n", summary.p999_ns);
+    std::printf("  Maximum latency:      %.3f ns\n", summary.maximum_ns);
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
     if (rte_eal_init(argc, argv) < 0) {
-        std::fprintf(stderr, "EAL initialization failed\n");
+        std::fprintf(
+            stderr,
+            "PulseBook Phase 9C failure: EAL initialization failed\n");
+        return EXIT_FAILURE;
+    }
+
+    const std::uint64_t tsc_hz = rte_get_tsc_hz();
+
+    if (tsc_hz == 0) {
+        std::fprintf(
+            stderr,
+            "PulseBook Phase 9C failure: invalid TSC frequency\n");
+        rte_eal_cleanup();
         return EXIT_FAILURE;
     }
 
@@ -187,8 +216,7 @@ int main(int argc, char** argv) {
     if (available_ports == 0) {
         std::fprintf(
             stderr,
-            "No DPDK port found. Start this executable with "
-            "--vdev=eth_af_packet0,iface=pb_eng,qpairs=1\n");
+            "PulseBook Phase 9C failure: no AF_PACKET DPDK port available\n");
         rte_eal_cleanup();
         return EXIT_FAILURE;
     }
@@ -204,7 +232,9 @@ int main(int argc, char** argv) {
     }
 
     if (!found_port) {
-        std::fprintf(stderr, "Unable to select AF_PACKET DPDK port\n");
+        std::fprintf(
+            stderr,
+            "PulseBook Phase 9C failure: port enumeration failed\n");
         rte_eal_cleanup();
         return EXIT_FAILURE;
     }
@@ -220,7 +250,7 @@ int main(int argc, char** argv) {
     if (mempool == nullptr) {
         std::fprintf(
             stderr,
-            "Mempool creation failed: %s\n",
+            "PulseBook Phase 9C failure: mempool creation failed: %s\n",
             rte_strerror(rte_errno));
         rte_eal_cleanup();
         return EXIT_FAILURE;
@@ -234,20 +264,28 @@ int main(int argc, char** argv) {
 
     pulsebook::TradingEngine<64> engine(make_engine_config());
 
-    Counters counters{};
-    std::uint32_t outbound_sequence = 5001;
+    pulsebook::dpdk::DpdkLatencyRecorder recorder(
+        kMeasuredOrders,
+        tsc_hz);
+
+    ProcessingCounters counters{};
+    std::uint32_t outbound_sequence = 5'000'001;
     bool success = true;
 
     std::printf("============================================================\n");
-    std::printf("PulseBook Level 3 Phase 9B - DPDK AF_PACKET Engine\n");
+    std::printf("PulseBook Level 3 Phase 9C - AF_PACKET Latency Engine\n");
     std::printf("============================================================\n");
     std::printf("DPDK version:              %s\n", rte_version());
     std::printf("Main lcore:                %u\n", rte_lcore_id());
-    std::printf("Available DPDK ports:      %u\n", available_ports);
-    std::printf("Selected port:             %u\n", port_id);
+    std::printf("TSC frequency:             %llu Hz\n",
+                static_cast<unsigned long long>(tsc_hz));
     std::printf("Linux interface:           pb_eng\n");
-    std::printf("Classification:            Kernel-backed DPDK AF_PACKET\n");
-    std::printf("Waiting for packets...\n");
+    std::printf("Virtual transport:         Linux veth\n");
+    std::printf("PMD:                       AF_PACKET\n");
+    std::printf("Seed packets expected:     %zu\n", kSeedPackets);
+    std::printf("Warmup orders expected:    %zu\n", kWarmupOrders);
+    std::printf("Measured orders expected:  %zu\n", kMeasuredOrders);
+    std::printf("Waiting for benchmark generator...\n");
     std::fflush(stdout);
 
     const std::uint64_t deadline =
@@ -255,7 +293,7 @@ int main(int argc, char** argv) {
         rte_get_timer_hz() * kTimeoutSeconds;
 
     while (success &&
-           counters.orders_emitted == 0 &&
+           counters.measured_orders < kMeasuredOrders &&
            rte_get_timer_cycles() < deadline) {
         rte_mbuf* packets[kBurstSize]{};
 
@@ -273,6 +311,8 @@ int main(int argc, char** argv) {
         for (std::uint16_t index = 0; index < received; ++index) {
             rte_mbuf* const packet = packets[index];
             ++counters.received_packets;
+
+            const std::uint64_t start_cycles = rte_rdtsc_precise();
 
             const auto* const data =
                 rte_pktmbuf_mtod(packet, const std::byte*);
@@ -306,57 +346,87 @@ int main(int argc, char** argv) {
             if (!pulsebook::dpdk::EngineWireAdapter::to_market_update(
                     market_message,
                     update)) {
-                ++counters.invalid_packets;
-                continue;
+                ++counters.failures;
+                success = false;
+                break;
             }
 
             const pulsebook::EngineResult result =
                 engine.on_market_update(update);
 
-            switch (result.status) {
-                case pulsebook::EngineStatus::no_order:
-                    ++counters.no_signal_events;
-                    break;
-
-                case pulsebook::EngineStatus::risk_rejected:
-                    ++counters.risk_rejected;
-                    break;
-
-                case pulsebook::EngineStatus::outbox_full:
-                    ++counters.outbox_full;
-                    break;
-
-                case pulsebook::EngineStatus::invalid_update:
-                    ++counters.invalid_packets;
-                    break;
-
-                case pulsebook::EngineStatus::order_emitted: {
-                    pulsebook::OrderRequest order{};
-
-                    if (!engine.pop_order(order) ||
-                        !send_order_packet(
-                            port_id,
-                            mempool,
-                            response_envelope(received_envelope),
-                            order,
-                            outbound_sequence)) {
-                        success = false;
-                        break;
-                    }
-
-                    ++counters.orders_emitted;
+            if (counters.valid_market_packets <= kSeedPackets) {
+                if (result.status != pulsebook::EngineStatus::no_order) {
+                    std::fprintf(
+                        stderr,
+                        "Seed packet unexpectedly emitted an order\n");
+                    ++counters.failures;
+                    success = false;
                     break;
                 }
+
+                ++counters.seed_no_signal_events;
+                continue;
             }
 
-            if (!success || counters.orders_emitted != 0) {
+            if (result.status != pulsebook::EngineStatus::order_emitted ||
+                result.signal != pulsebook::Signal::buy) {
+                std::fprintf(
+                    stderr,
+                    "Trigger packet did not emit expected BUY order\n");
+                ++counters.failures;
+                success = false;
+                break;
+            }
+
+            pulsebook::OrderRequest order{};
+
+            if (!engine.pop_order(order) ||
+                !create_and_transmit_order(
+                    port_id,
+                    mempool,
+                    response_envelope(received_envelope),
+                    order,
+                    outbound_sequence)) {
+                std::fprintf(
+                    stderr,
+                    "Outbound order transmission failed\n");
+                ++counters.failures;
+                success = false;
+                break;
+            }
+
+            const std::uint64_t end_cycles = rte_rdtsc_precise();
+            const std::uint64_t elapsed_cycles =
+                end_cycles - start_cycles;
+
+            engine.acknowledge_one_order();
+
+            const std::uint64_t completed_order_count =
+                counters.warmup_orders +
+                counters.measured_orders;
+
+            if (completed_order_count < kWarmupOrders) {
+                ++counters.warmup_orders;
+            } else {
+                if (!recorder.record_cycles(elapsed_cycles)) {
+                    ++counters.failures;
+                    success = false;
+                    break;
+                }
+
+                ++counters.measured_orders;
+            }
+
+            if (counters.measured_orders >= kMeasuredOrders) {
                 break;
             }
         }
     }
 
-    if (counters.orders_emitted != 1) {
-        std::fprintf(stderr, "No outbound order was generated\n");
+    if (counters.seed_no_signal_events != kSeedPackets ||
+        counters.warmup_orders != kWarmupOrders ||
+        counters.measured_orders != kMeasuredOrders ||
+        counters.failures != 0) {
         success = false;
     }
 
@@ -364,33 +434,57 @@ int main(int argc, char** argv) {
     rte_eth_stats_get(port_id, &stats);
 
     if (success) {
-        std::printf("\nAF_PACKET engine result:\n");
-        std::printf("  Received packets:         %llu\n",
-                    static_cast<unsigned long long>(
-                        counters.received_packets));
-        std::printf("  Valid market packets:     %llu\n",
+        const auto summary = recorder.summarize();
+
+        std::printf("\n============================================================\n");
+        std::printf("PulseBook Phase 9C Benchmark Result\n");
+        std::printf("============================================================\n");
+        std::printf("Measured boundary:\n");
+        std::printf("  Start: AF_PACKET rte_eth_rx_burst() returned packet\n");
+        std::printf("  End:   AF_PACKET rte_eth_tx_burst() accepted order\n");
+        std::printf("\n");
+        std::printf("AF_PACKET application-side BUY packet path:\n");
+        print_latency_summary(summary);
+        std::printf("\n");
+        std::printf("Counters:\n");
+        std::printf("  Valid market packets:    %llu\n",
                     static_cast<unsigned long long>(
                         counters.valid_market_packets));
-        std::printf("  No-signal events:         %llu\n",
+        std::printf("  Seed no-signal events:   %llu\n",
                     static_cast<unsigned long long>(
-                        counters.no_signal_events));
-        std::printf("  Orders emitted:           %llu\n",
+                        counters.seed_no_signal_events));
+        std::printf("  Warmup orders:           %llu\n",
                     static_cast<unsigned long long>(
-                        counters.orders_emitted));
-        std::printf("  Invalid packets:          %llu\n",
+                        counters.warmup_orders));
+        std::printf("  Measured orders:         %llu\n",
+                    static_cast<unsigned long long>(
+                        counters.measured_orders));
+        std::printf("  Invalid filtered frames: %llu\n",
                     static_cast<unsigned long long>(
                         counters.invalid_packets));
-        std::printf("  Risk rejected:            %llu\n",
+        std::printf("  Failures:                %llu\n",
                     static_cast<unsigned long long>(
-                        counters.risk_rejected));
-        std::printf("  PMD RX packets:           %llu\n",
+                        counters.failures));
+        std::printf("  PMD RX packets:          %llu\n",
                     static_cast<unsigned long long>(stats.ipackets));
-        std::printf("  PMD TX packets:           %llu\n",
+        std::printf("  PMD TX packets:          %llu\n",
                     static_cast<unsigned long long>(stats.opackets));
         std::printf("\n");
-        std::printf("This is a kernel-backed AF_PACKET functional path.\n");
-        std::printf("It is not VFIO physical-NIC bypass latency.\n");
+        std::printf("Classification:\n");
+        std::printf("  Kernel-backed DPDK AF_PACKET application-side latency.\n");
+        std::printf("  This is not VFIO hardware-bypass, physical wire latency,\n");
+        std::printf("  or exchange round-trip latency.\n");
         std::printf("\nStatus:                    OK\n");
+
+        /*
+         * Give the kernel-backed peer time to receive the final enqueued
+         * order before the AF_PACKET port is closed.
+         */
+        rte_delay_ms(100);
+    } else {
+        std::fprintf(
+            stderr,
+            "PulseBook Phase 9C failure: benchmark did not complete correctly\n");
     }
 
     const int stop_result = rte_eth_dev_stop(port_id);

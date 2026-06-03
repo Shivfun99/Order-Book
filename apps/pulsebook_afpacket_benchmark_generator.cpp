@@ -20,7 +20,9 @@
 namespace {
 
 inline constexpr const char* kDefaultInterface = "pb_peer";
-inline constexpr int kReceiveTimeoutMs = 5000;
+inline constexpr int kOrderTimeoutMs = 5000;
+inline constexpr std::size_t kWarmupOrders = 100'000;
+inline constexpr std::size_t kMeasuredOrders = 1'000'000;
 
 pulsebook::wire::EthernetEnvelope market_envelope() noexcept {
     pulsebook::wire::EthernetEnvelope envelope{};
@@ -68,7 +70,7 @@ pulsebook::wire::MarketDataMessage make_message(
     return message;
 }
 
-bool transmit_message(
+bool send_market_message(
     const int socket_fd,
     const sockaddr_ll& destination,
     const pulsebook::wire::MarketDataMessage& message) noexcept {
@@ -92,12 +94,12 @@ bool transmit_message(
     return sent == static_cast<ssize_t>(frame.size());
 }
 
-bool wait_for_order(
+bool receive_valid_order(
     const int socket_fd,
     pulsebook::wire::OutboundOrderMessage& output) noexcept {
     const auto deadline =
         std::chrono::steady_clock::now() +
-        std::chrono::milliseconds(kReceiveTimeoutMs);
+        std::chrono::milliseconds(kOrderTimeoutMs);
 
     while (std::chrono::steady_clock::now() < deadline) {
         pollfd descriptor{};
@@ -114,7 +116,7 @@ bool wait_for_order(
             continue;
         }
 
-        std::array<std::byte, 2048> buffer{};
+        std::array<std::byte, 4096> buffer{};
 
         const ssize_t received = recvfrom(
             socket_fd,
@@ -130,21 +132,52 @@ bool wait_for_order(
 
         pulsebook::wire::EthernetEnvelope envelope{};
 
-        const auto decode_result =
-            pulsebook::wire::decode_order_frame(
+        if (pulsebook::wire::decode_order_frame(
                 std::span<const std::byte>(
                     buffer.data(),
                     static_cast<std::size_t>(received)),
                 envelope,
-                output);
-
-        if (decode_result ==
+                output) ==
             pulsebook::wire::FrameDecodeError::none) {
             return true;
         }
     }
 
     return false;
+}
+
+bool validate_buy_order(
+    const pulsebook::wire::OutboundOrderMessage& order) noexcept {
+    return order.instrument_id == 77 &&
+           order.price_ticks == 100100 &&
+           order.quantity == 10 &&
+           order.side == pulsebook::wire::Side::buy;
+}
+
+bool send_trigger_and_validate_order(
+    const int socket_fd,
+    const sockaddr_ll& destination,
+    const std::uint32_t sequence_number,
+    const std::size_t event_index) noexcept {
+    const std::uint32_t trigger_quantity =
+        1000U + static_cast<std::uint32_t>(event_index & 1U);
+
+    if (!send_market_message(
+            socket_fd,
+            destination,
+            make_message(
+                sequence_number,
+                pulsebook::wire::Side::buy,
+                0,
+                100000,
+                trigger_quantity))) {
+        return false;
+    }
+
+    pulsebook::wire::OutboundOrderMessage order{};
+
+    return receive_valid_order(socket_fd, order) &&
+           validate_buy_order(order);
 }
 
 }  // namespace
@@ -159,7 +192,7 @@ int main(int argc, char** argv) {
     if (interface_index == 0) {
         std::fprintf(
             stderr,
-            "Generator failure: interface %s was not found\n",
+            "Benchmark generator failure: interface %s not found\n",
             interface_name);
         return EXIT_FAILURE;
     }
@@ -172,7 +205,7 @@ int main(int argc, char** argv) {
     if (socket_fd < 0) {
         std::fprintf(
             stderr,
-            "Generator failure: raw socket creation failed: %s\n",
+            "Benchmark generator failure: socket creation failed: %s\n",
             std::strerror(errno));
         return EXIT_FAILURE;
     }
@@ -188,7 +221,7 @@ int main(int argc, char** argv) {
             sizeof(bind_address)) < 0) {
         std::fprintf(
             stderr,
-            "Generator failure: bind failed: %s\n",
+            "Benchmark generator failure: bind failed: %s\n",
             std::strerror(errno));
         close(socket_fd);
         return EXIT_FAILURE;
@@ -213,7 +246,7 @@ int main(int argc, char** argv) {
     std::uint32_t sequence_number = 1;
 
     for (std::uint16_t level = 0; level < 5; ++level) {
-        if (!transmit_message(
+        if (!send_market_message(
                 socket_fd,
                 destination,
                 make_message(
@@ -222,14 +255,16 @@ int main(int argc, char** argv) {
                     level,
                     100100 + level,
                     10))) {
-            std::fprintf(stderr, "Generator failure: ASK TX failed\n");
+            std::fprintf(
+                stderr,
+                "Benchmark generator failure: ASK seed TX failed\n");
             close(socket_fd);
             return EXIT_FAILURE;
         }
     }
 
     for (std::uint16_t level = 0; level < 5; ++level) {
-        if (!transmit_message(
+        if (!send_market_message(
                 socket_fd,
                 destination,
                 make_message(
@@ -238,62 +273,74 @@ int main(int argc, char** argv) {
                     level,
                     100000 - level,
                     10))) {
-            std::fprintf(stderr, "Generator failure: BID TX failed\n");
+            std::fprintf(
+                stderr,
+                "Benchmark generator failure: BID seed TX failed\n");
             close(socket_fd);
             return EXIT_FAILURE;
         }
     }
 
-    if (!transmit_message(
-            socket_fd,
-            destination,
-            make_message(
-                sequence_number,
-                pulsebook::wire::Side::buy,
-                0,
-                100000,
-                1000))) {
-        std::fprintf(stderr, "Generator failure: trigger TX failed\n");
-        close(socket_fd);
-        return EXIT_FAILURE;
-    }
-
-    pulsebook::wire::OutboundOrderMessage order{};
-
-    if (!wait_for_order(socket_fd, order)) {
-        std::fprintf(
-            stderr,
-            "Generator failure: valid outbound order not received\n");
-        close(socket_fd);
-        return EXIT_FAILURE;
-    }
-
-    const bool valid =
-        order.instrument_id == 77 &&
-        order.price_ticks == 100100 &&
-        order.quantity == 10 &&
-        order.side == pulsebook::wire::Side::buy;
-
-    if (!valid) {
-        std::fprintf(
-            stderr,
-            "Generator failure: outbound order fields are incorrect\n");
-        close(socket_fd);
-        return EXIT_FAILURE;
-    }
-
     std::printf("============================================================\n");
-    std::printf("PulseBook Level 3 Phase 9B - Raw Packet Generator\n");
+    std::printf("PulseBook Level 3 Phase 9C - AF_PACKET Generator\n");
     std::printf("============================================================\n");
     std::printf("Interface:                 %s\n", interface_name);
-    std::printf("Market packets sent:       11\n");
-    std::printf("Outbound orders received:  1\n");
-    std::printf("Generated order side:      BUY\n");
-    std::printf("Generated order price:     %lld\n",
-                static_cast<long long>(order.price_ticks));
-    std::printf("Generated order quantity:  %u\n",
-                order.quantity);
-    std::printf("Status:                    OK\n");
+    std::printf("Seed market packets sent:  10\n");
+    std::printf("Warmup orders to request:  %zu\n", kWarmupOrders);
+    std::printf("Measured orders to request:%zu\n", kMeasuredOrders);
+    std::fflush(stdout);
+
+    for (std::size_t event = 0;
+         event < kWarmupOrders;
+         ++event) {
+        if (!send_trigger_and_validate_order(
+                socket_fd,
+                destination,
+                sequence_number++,
+                event)) {
+            std::fprintf(
+                stderr,
+                "Benchmark generator failure during warmup event %zu\n",
+                event);
+            close(socket_fd);
+            return EXIT_FAILURE;
+        }
+    }
+
+    std::printf("Warmup completed:           %zu orders validated\n",
+                kWarmupOrders);
+    std::fflush(stdout);
+
+    for (std::size_t event = 0;
+         event < kMeasuredOrders;
+         ++event) {
+        if (!send_trigger_and_validate_order(
+                socket_fd,
+                destination,
+                sequence_number++,
+                event)) {
+            std::fprintf(
+                stderr,
+                "Benchmark generator failure during measured event %zu\n",
+                event);
+            close(socket_fd);
+            return EXIT_FAILURE;
+        }
+
+        if ((event + 1) % 100'000 == 0) {
+            std::printf("Validated measured orders: %zu / %zu\n",
+                        event + 1,
+                        kMeasuredOrders);
+            std::fflush(stdout);
+        }
+    }
+
+    std::printf("\nGenerator result:\n");
+    std::printf("  Seed market packets:      10\n");
+    std::printf("  Warmup orders validated:  %zu\n", kWarmupOrders);
+    std::printf("  Measured orders validated:%zu\n", kMeasuredOrders);
+    std::printf("  Validation failures:      0\n");
+    std::printf("\nStatus:                    OK\n");
 
     close(socket_fd);
     return EXIT_SUCCESS;
