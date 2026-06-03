@@ -1,9 +1,9 @@
-pulsebook_test_wire_market_data 1 0.00192171
-pulsebook_test_wire_order 1 0.00267425
-pulsebook_test_wire_invalid_packet 1 0.0025351
-pulsebook_test_ethernet_market_frame 1 0.00205789
-pulsebook_test_ethernet_order_frame 1 0.00200983
-pulsebook_test_engine_wire_adapter 1 0.00231474
-pulsebook_test_engine_scenarios 1 0.0018663
-pulsebook_test_dpdk_scenarios_virtual 1 1.19989
+pulsebook_test_wire_market_data 1 0.00183926
+pulsebook_test_wire_order 1 0.00105409
+pulsebook_test_wire_invalid_packet 1 0.00079586
+pulsebook_test_ethernet_market_frame 1 0.000783249
+pulsebook_test_ethernet_order_frame 1 0.00121337
+pulsebook_test_engine_wire_adapter 1 0.00115626
+pulsebook_test_engine_scenarios 1 0.000849957
+pulsebook_test_dpdk_scenarios_virtual 1 0.0532427
 ---

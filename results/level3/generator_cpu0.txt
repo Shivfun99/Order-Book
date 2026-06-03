@@ -1,0 +1,26 @@
+============================================================
+PulseBook Level 3 Phase 9C - AF_PACKET Generator
+============================================================
+Interface:                 pb_peer
+Seed market packets sent:  10
+Warmup orders to request:  100000
+Measured orders to request:1000000
+Warmup completed:           100000 orders validated
+Validated measured orders: 100000 / 1000000
+Validated measured orders: 200000 / 1000000
+Validated measured orders: 300000 / 1000000
+Validated measured orders: 400000 / 1000000
+Validated measured orders: 500000 / 1000000
+Validated measured orders: 600000 / 1000000
+Validated measured orders: 700000 / 1000000
+Validated measured orders: 800000 / 1000000
+Validated measured orders: 900000 / 1000000
+Validated measured orders: 1000000 / 1000000
+
+Generator result:
+  Seed market packets:      10
+  Warmup orders validated:  100000
+  Measured orders validated:1000000
+  Validation failures:      0
+
+Status:                    OK

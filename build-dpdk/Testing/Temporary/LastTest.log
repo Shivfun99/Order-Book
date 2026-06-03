@@ -1,17 +1,17 @@
-Start testing: Jun 03 01:40 IST
+Start testing: Jun 03 13:03 IST
 ----------------------------------------------------------
 1/8 Testing: pulsebook_test_wire_market_data
 1/8 Test: pulsebook_test_wire_market_data
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_wire_market_data"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_wire_market_data" start time: Jun 03 01:40 IST
+"pulsebook_test_wire_market_data" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_wire_market_data" end time: Jun 03 01:40 IST
+"pulsebook_test_wire_market_data" end time: Jun 03 13:03 IST
 "pulsebook_test_wire_market_data" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -19,14 +19,14 @@ Test Passed.
 2/8 Test: pulsebook_test_wire_order
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_wire_order"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_wire_order" start time: Jun 03 01:40 IST
+"pulsebook_test_wire_order" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_wire_order" end time: Jun 03 01:40 IST
+"pulsebook_test_wire_order" end time: Jun 03 13:03 IST
 "pulsebook_test_wire_order" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -34,14 +34,14 @@ Test Passed.
 3/8 Test: pulsebook_test_wire_invalid_packet
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_wire_invalid_packet"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_wire_invalid_packet" start time: Jun 03 01:40 IST
+"pulsebook_test_wire_invalid_packet" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_wire_invalid_packet" end time: Jun 03 01:40 IST
+"pulsebook_test_wire_invalid_packet" end time: Jun 03 13:03 IST
 "pulsebook_test_wire_invalid_packet" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -49,14 +49,14 @@ Test Passed.
 4/8 Test: pulsebook_test_ethernet_market_frame
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_ethernet_market_frame"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_ethernet_market_frame" start time: Jun 03 01:40 IST
+"pulsebook_test_ethernet_market_frame" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_ethernet_market_frame" end time: Jun 03 01:40 IST
+"pulsebook_test_ethernet_market_frame" end time: Jun 03 13:03 IST
 "pulsebook_test_ethernet_market_frame" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -64,14 +64,14 @@ Test Passed.
 5/8 Test: pulsebook_test_ethernet_order_frame
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_ethernet_order_frame"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_ethernet_order_frame" start time: Jun 03 01:40 IST
+"pulsebook_test_ethernet_order_frame" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_ethernet_order_frame" end time: Jun 03 01:40 IST
+"pulsebook_test_ethernet_order_frame" end time: Jun 03 13:03 IST
 "pulsebook_test_ethernet_order_frame" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -79,14 +79,14 @@ Test Passed.
 6/8 Test: pulsebook_test_engine_wire_adapter
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_engine_wire_adapter"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_engine_wire_adapter" start time: Jun 03 01:40 IST
+"pulsebook_test_engine_wire_adapter" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_engine_wire_adapter" end time: Jun 03 01:40 IST
+"pulsebook_test_engine_wire_adapter" end time: Jun 03 13:03 IST
 "pulsebook_test_engine_wire_adapter" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -94,29 +94,28 @@ Test Passed.
 7/8 Test: pulsebook_test_engine_scenarios
 Command: "/home/shiv/Order Book/build-dpdk/pulsebook_test_engine_scenarios"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_engine_scenarios" start time: Jun 03 01:40 IST
+"pulsebook_test_engine_scenarios" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_engine_scenarios" end time: Jun 03 01:40 IST
+"pulsebook_test_engine_scenarios" end time: Jun 03 13:03 IST
 "pulsebook_test_engine_scenarios" time elapsed: 00:00:00
 ----------------------------------------------------------
 
 8/8 Testing: pulsebook_test_dpdk_scenarios_virtual
 8/8 Test: pulsebook_test_dpdk_scenarios_virtual
-Command: "/home/shiv/Order Book/build-dpdk/pulsebook_dpdk_scenarios" "-l" "0" "--no-pci" "--no-huge" "--in-memory" "--mbuf-pool-ops-name=ring_mp_mc" "--file-prefix=pb_t7"
+Command: "/home/shiv/Order Book/build-dpdk/pulsebook_dpdk_scenarios" "-l" "0" "--no-pci" "--no-huge" "--in-memory" "--mbuf-pool-ops-name=ring_mp_mc" "--file-prefix=pb_ctest_scenarios"
 Directory: /home/shiv/Order Book/build-dpdk
-"pulsebook_test_dpdk_scenarios_virtual" start time: Jun 03 01:40 IST
+"pulsebook_test_dpdk_scenarios_virtual" start time: Jun 03 13:03 IST
 Output:
 ----------------------------------------------------------
 EAL: Detected CPU lcores: 4
 EAL: Detected NUMA nodes: 1
 EAL: Detected shared linkage of DPDK
 EAL: Selected IOVA mode 'VA'
-EAL: VFIO support initialized
 ============================================================
 PulseBook Level 3 Phase 7 - DPDK Scenario Validation
 ============================================================
@@ -149,11 +148,11 @@ Virtual port counters:
 
 Status:                    OK
 <end of output>
-Test time =   1.20 sec
+Test time =   0.05 sec
 ----------------------------------------------------------
 Test Passed.
-"pulsebook_test_dpdk_scenarios_virtual" end time: Jun 03 01:40 IST
-"pulsebook_test_dpdk_scenarios_virtual" time elapsed: 00:00:01
+"pulsebook_test_dpdk_scenarios_virtual" end time: Jun 03 13:03 IST
+"pulsebook_test_dpdk_scenarios_virtual" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Jun 03 01:40 IST
+End testing: Jun 03 13:03 IST

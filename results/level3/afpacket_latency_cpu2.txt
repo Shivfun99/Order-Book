@@ -1,0 +1,50 @@
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Selected IOVA mode 'VA'
+============================================================
+PulseBook Level 3 Phase 9C - AF_PACKET Latency Engine
+============================================================
+DPDK version:              DPDK 25.11.0
+Main lcore:                2
+TSC frequency:             2995200000 Hz
+Linux interface:           pb_eng
+Virtual transport:         Linux veth
+PMD:                       AF_PACKET
+Seed packets expected:     10
+Warmup orders expected:    100000
+Measured orders expected:  1000000
+Waiting for benchmark generator...
+
+============================================================
+PulseBook Phase 9C Benchmark Result
+============================================================
+Measured boundary:
+  Start: AF_PACKET rte_eth_rx_burst() returned packet
+  End:   AF_PACKET rte_eth_tx_burst() accepted order
+
+AF_PACKET application-side BUY packet path:
+  Samples:              1000000
+  Mean latency:         2162.100 ns
+  p50 latency:          1831.597 ns
+  p95 latency:          2902.644 ns
+  p99 latency:          7821.848 ns
+  p99.9 latency:        22061.298 ns
+  Maximum latency:      200912.794 ns
+
+Counters:
+  Valid market packets:    1100010
+  Seed no-signal events:   10
+  Warmup orders:           100000
+  Measured orders:         1000000
+  Invalid filtered frames: 2
+  Failures:                0
+  PMD RX packets:          1100012
+  PMD TX packets:          1100000
+
+Classification:
+  Kernel-backed DPDK AF_PACKET application-side latency.
+  This is not VFIO hardware-bypass, physical wire latency,
+  or exchange round-trip latency.
+
+Status:                    OK

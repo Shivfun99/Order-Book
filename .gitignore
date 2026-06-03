@@ -1,8 +1,22 @@
-build*/
+# CMake / Ninja build output
+build/
+build-*/
+cmake-build-*/
+
+# Diagnostics produced during local experiments
+diagnostics/
+
+# Compiler-generated files
 *.o
-*.so
 *.a
-*.exe
-.DS_Store
+*.so
+*.d
+*.out
+
+# Editor files
 .vscode/
-pulsebook_dpdk_hello
+.idea/
+*.swp
+
+# OS files
+.DS_Store

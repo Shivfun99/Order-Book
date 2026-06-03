@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/shiv/Order Book/build-frame/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

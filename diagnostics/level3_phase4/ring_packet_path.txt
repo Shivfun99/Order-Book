@@ -1,6 +1,0 @@
-============================================================
-PulseBook Level 3 Phase 4 - Virtual DPDK RX/TX Path
-============================================================
-DPDK version:             DPDK 25.11.0
-Main lcore:               0
-Available ports at start: 0

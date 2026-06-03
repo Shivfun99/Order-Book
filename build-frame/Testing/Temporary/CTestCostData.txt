@@ -1,6 +1,0 @@
-pulsebook_test_wire_market_data 2 0.0013473
-pulsebook_test_wire_order 2 0.00151514
-pulsebook_test_wire_invalid_packet 2 0.00185523
-pulsebook_test_ethernet_market_frame 2 0.00183202
-pulsebook_test_ethernet_order_frame 2 0.00153473
----

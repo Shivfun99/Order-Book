@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/shiv/Order Book/build-wire/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

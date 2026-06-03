@@ -1,0 +1,29 @@
+EAL: Detected CPU lcores: 4
+EAL: Detected NUMA nodes: 1
+EAL: Detected shared linkage of DPDK
+EAL: Selected IOVA mode 'VA'
+============================================================
+PulseBook Level 3 Phase 9B - DPDK AF_PACKET Engine
+============================================================
+DPDK version:              DPDK 25.11.0
+Main lcore:                0
+Available DPDK ports:      1
+Selected port:             0
+Linux interface:           pb_eng
+Classification:            Kernel-backed DPDK AF_PACKET
+Waiting for packets...
+
+AF_PACKET engine result:
+  Received packets:         15
+  Valid market packets:     11
+  No-signal events:         10
+  Orders emitted:           1
+  Invalid packets:          4
+  Risk rejected:            0
+  PMD RX packets:           15
+  PMD TX packets:           1
+
+This is a kernel-backed AF_PACKET functional path.
+It is not VFIO physical-NIC bypass latency.
+
+Status:                    OK

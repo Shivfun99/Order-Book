@@ -1,7 +1,0 @@
-# ninja log v7
-2	156	1780426946242956397	CMakeFiles/pulsebook_test_wire_invalid_packet.dir/tests/test_wire_invalid_packet.cpp.o	6ff33aeecf4ae0fb
-2	157	1780426946242249481	CMakeFiles/pulsebook_test_wire_order.dir/tests/test_wire_order.cpp.o	ee7d60cec8854ded
-1	191	1780426946241249488	CMakeFiles/pulsebook_test_wire_market_data.dir/tests/test_wire_market_data.cpp.o	3fdddacdffed8844
-156	194	1780426946396935665	pulsebook_test_wire_invalid_packet	e2cb26e9751e10d8
-157	194	1780426946397248311	pulsebook_test_wire_order	9e8333f4527a6909
-191	218	1780426946431248055	pulsebook_test_wire_market_data	6b4b09ac13f6d883

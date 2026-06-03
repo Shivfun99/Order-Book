@@ -134,13 +134,13 @@ CMAKE_PROJECT_NAME:STATIC=PulseBook
 CMAKE_PROJECT_SPDX_LICENSE:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION:STATIC=0.3.0
+CMAKE_PROJECT_VERSION:STATIC=1.0.0
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_MAJOR:STATIC=0
+CMAKE_PROJECT_VERSION_MAJOR:STATIC=1
 
 //Value Computed by CMake
-CMAKE_PROJECT_VERSION_MINOR:STATIC=3
+CMAKE_PROJECT_VERSION_MINOR:STATIC=0
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION_PATCH:STATIC=0
@@ -230,7 +230,10 @@ CTEST_SUBMIT_RETRY_DELAY:STRING=5
 DART_TESTING_TIMEOUT:STRING=1500
 
 //Path to a library.
-DPDK_NET_RING_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/librte_net_ring.so
+DPDK_NET_RING_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/dpdk/pmds-26.0/librte_net_ring.so
+
+//Path to a program.
+GITCOMMAND:FILEPATH=/usr/bin/git
 
 //Command to build the project
 MAKECOMMAND:STRING=/usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
@@ -247,7 +250,10 @@ PKG_CONFIG_ARGN:STRING=
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
-//Build DPDK apps
+//Build latency benchmark executables
+PULSEBOOK_BUILD_BENCHMARKS:BOOL=ON
+
+//Build DPDK applications and benchmarks
 PULSEBOOK_ENABLE_DPDK:BOOL=ON
 
 //Value Computed by CMake
@@ -624,6 +630,8 @@ DPDK_libdpdk_PREFIX:INTERNAL=
 DPDK_libdpdk_VERSION:INTERNAL=
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v2.5.1()]
+//ADVANCED property for variable: GITCOMMAND
+GITCOMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MAKECOMMAND
 MAKECOMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MEMORYCHECK_COMMAND
