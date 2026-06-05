@@ -1,4 +1,4 @@
-# PulseBook Level 3
+# PulseBook
 
 **PulseBook** is a C++20 + DPDK low-latency trading packet processor.
 
